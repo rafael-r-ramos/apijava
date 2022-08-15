@@ -2,18 +2,30 @@ package com.rafael.apijava.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.CascadeType;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
+import javax.persistence.UniqueConstraint;
+import javax.persistence.criteria.Fetch;
+
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-public class Usuario implements Serializable  {
+public class Usuario implements UserDetails  {
 	
 
 	private static final long serialVersionUID = 1L;
@@ -28,8 +40,18 @@ public class Usuario implements Serializable  {
 	
 	private String nome;
 	
-	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "usuario", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<Telefone> telefones = new ArrayList<Telefone>();
+	
+	@OneToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "usuarios_role", uniqueConstraints = @UniqueConstraint (
+			columnNames = {"usuario_id", "role_id"}, name = "unique_role_user"),
+	joinColumns  = @JoinColumn(name = "usuario_id", referencedColumnName = "id", table = "usuario" , unique = false,
+	foreignKey = @javax.persistence.ForeignKey(name = "usuario_fk" , value = ConstraintMode.CONSTRAINT )), 
+	
+			inverseJoinColumns = @JoinColumn(name = "role_id" , referencedColumnName = "id", table= "role", unique = false, updatable = false,
+			foreignKey = @javax.persistence.ForeignKey (name = "role_fk" , value = ConstraintMode.CONSTRAINT) ))
+	private List<Role> roles;
 	
 	public List<Telefone> getTelefones() {
 		return telefones;
@@ -86,6 +108,47 @@ public class Usuario implements Serializable  {
 			return false;
 		Usuario other = (Usuario) obj;
 		return id == other.id;
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		
+		return roles;
+	}
+
+	@Override
+	public String getPassword() {
+		return this.senha;
+	}
+
+	@Override
+	public String getUsername() {
+		
+		return this.login;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		// TODO Auto-generated method stub
+		return true;
 	}
 	
 	

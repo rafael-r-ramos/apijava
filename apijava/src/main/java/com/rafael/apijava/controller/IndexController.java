@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.rafael.apijava.model.Usuario;
 import com.rafael.apijava.repository.UsuarioRepository;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping(value="/usuario")
 public class IndexController {

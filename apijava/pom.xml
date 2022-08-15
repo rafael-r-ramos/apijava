@@ -52,6 +52,14 @@
 			<version>9.4-1200-jdbc41</version>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/org.springframework.security/spring-security-core -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>5.7.2</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>
